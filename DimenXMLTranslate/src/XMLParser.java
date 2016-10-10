@@ -21,20 +21,28 @@ public class XMLParser {
 		this.parseFile = file;
 		this.resultDp = resultDp;
 		ratio = (float)resultDp/baseDp;
+		System.out.println("ratio is: " + ratio);
 	}
 	
 	public void start(){
 		System.out.println("start parse " + parseFile.getName());
 		String absolutePath = parseFile.getAbsolutePath();
 		String filePath = absolutePath.substring(0,absolutePath.lastIndexOf(File.separator));
-		String resultFilename = "dimens_sw"+String.valueOf(resultDp)+"dp.xml";
+		String resultFilename = "dimens.xml";
 		createResultFile(filePath,resultFilename);
 		translateFile();
 	}
 	
 	private void createResultFile(String filepath, String filename){
-		String absolutePath = filepath+"\\"+filename;
-		System.out.println("absolutePath is: " + absolutePath);
+		String dirName = "values-sw" + String.valueOf(resultDp) + "dp";
+		if(new File(filepath+File.separator+dirName).mkdir()){
+			System.out.println("Make dir success");
+		}else{
+			System.out.println("Make dir fail");
+		}
+		
+		
+		String absolutePath = filepath+File.separator+dirName+File.separator+filename;
 		resultFile = new File(absolutePath);
         // if file doesnt exists, then create it
         if (!resultFile.exists()) {
@@ -95,7 +103,7 @@ public class XMLParser {
 		int intValue = Integer.valueOf(tokens[0]);
 		//System.out.println("value is: " + intValue);
 		
-		int resultValue = Math.round((float)intValue*ratio); 
+		int resultValue = (int) Math.round(intValue*ratio); 
 		 		
 		return line.replace(tokens[0],  Integer.toString(resultValue));
 	}
